@@ -103,4 +103,62 @@ const getAllProducts = async(reqQuery) => {
         query = query.where("color").regex(colorRegex);
         
     }
+
+    if(sizes){
+        const sizeSet = new Set(sizes);
+        query.query.where("sizes.name").in([...sizeSet])
+        
+    }
+
+    if(minPrice && maxPrice){
+        query = query.where("discountedPrice").gte(minPrice).lte(maxPrice)
+        
+    }
+
+    if(minDiscount){
+        query = query.where("discountPersent").gte(minDiscount);
+
+    }
+
+    if(stock){
+        if(stock === "in_stock"){
+            query = query.where("quantity").gt(0);
+        }
+        else if(stock === "out_of_stock"){
+            query = query.where("quantity").gt(1);
+        }
+    }
+
+    if(sort){
+        const sortDirection = sort === "price_hight" ? -1 : 1;
+        query = query.sort({discountedPrice:sortDirection})
+    }
+
+    const totalProducts = await Product.countDocuments(query);
+    const skip = (pageNumber - 1) * pageSize;
+
+    query = query.skip(skip).limit(pageSize);
+
+    const products = await query.exec();
+
+    const totalPages = Math.ceil(totalProducts/pageSize);
+
+    return {content:products,currentPage:pageNumber,totalPages}
+
+}
+
+const createMultipleProducts = async(products) => {
+    for(let product of products){
+        await createProduct(product);
+    }
+}
+
+
+module.exports ={
+    createProduct,
+    deleteProduct,
+    updateProduct,
+    findProductById,
+    getAllProducts,
+    createMultipleProducts,
 }

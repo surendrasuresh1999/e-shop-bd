@@ -68,4 +68,4 @@ const addCartItem = async(userId,req) => {
     }
 }
 
-module.exports = {createCart,findUserCart,addCartItemaddCartItem};
+module.exports = {createCart,findUserCart,addCartItem};
