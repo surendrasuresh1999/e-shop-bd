@@ -4,7 +4,7 @@ const router = express.Router();
 const productController = require("../controllers/product.controller.js");
 const authenticate = require("../middleware/authenticate.js");
 
-router.post("/", authenticate, productController.getAllProducts);
-router.get("/:id/:id", authenticate, productController.findProductById);
+router.get("/", authenticate, productController.getAllProducts);
+router.get("/:id", authenticate, productController.findProductById);
 
 module.exports = router;

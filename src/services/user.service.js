@@ -15,7 +15,7 @@ const createUser = async(userData) => {
 
         const user = await User.create({firstName,lastName,email,password});
 
-        console.log("user created successfully", user)
+        // console.log("user created successfully", user)
 
         return user;
     } 
@@ -27,7 +27,7 @@ const createUser = async(userData) => {
 const findUserById = async(userId) => {
     try {
         const user = await User.findById(userId)
-        // .populate("addresses");
+        
         if(!user){
             throw new Error("user not found with id: ", userId)
         }

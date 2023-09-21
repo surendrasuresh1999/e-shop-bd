@@ -3,40 +3,47 @@ const Product = require("../models/product.model.js");
 
 
 const createProduct = async(reqData)=>{
-    let topLevel = await Category.findOne({name:reqData.topLevelCategory})
-
+    let topLevel = await Category.findOne({name:reqData.topLavelCategory})
+    
     if(!topLevel){
         topLevel = new Category({
-            name:reqData.topLevelCategory,
-            lavel:1
+            name:reqData.topLavelCategory,
+            level:1
         })
+        await topLevel.save()
     }
+    // console.log("hello top",topLevel);
 
     let secondLevel = await Category.findOne({
-        name: reqData.secondLevelCategory,
+        name: reqData.secondLavelCategory,
         parentCategory: topLevel._id,
     })
 
     if(!secondLevel){
         secondLevel = new Category({
-            name:reqData.secondLevelCategory,
+            name:reqData.secondLavelCategory,
             parentCategory:topLevel._id,
             level:2
         })
+        await secondLevel.save()
+
     }
+    // console.log("second level",secondLevel)
 
     let thirdLevel = await Category.findOne({
-        name: reqData.thirdLevelCategory,
+        name: reqData.thirdLavelCategory,
         parentCategory: secondLevel._id,
     })
 
     if(!thirdLevel){
         thirdLevel = new Category({
-            name:reqData.thirdLevelCategory,
+            name:reqData.thirdLavelCategory,
             parentCategory:secondLevel._id,
             level:3
         })
+        await thirdLevel.save()
     }
+    // console.log("third level",thirdLevel)
 
     const product = new Product({
         title: reqData.title,
@@ -69,12 +76,14 @@ const updateProduct = async(productId,reqData) => {
 }
 
 const findProductById = async(productId) => {
+    
     const product = await Product.findById(productId).populate("category").exec();
+
     if(!product){
         throw new Error("Product not found with id: "+ productId);
     }
 
-    return prodcut;
+    return product;
 }
 
 const getAllProducts = async(reqQuery) => {
@@ -91,13 +100,13 @@ const getAllProducts = async(reqQuery) => {
 
         }
         else{
-            return {conten:[],currentPage:1,totalPages:0}
+            return {content:[],currentPage:1,totalPages:0}
         }
     }
 
     // white,black,orange,red,blue the 100 line will create like this
     if(color){
-        const colorSet = new Set(color.split(",").map(color => color.trim().toLowercase()));
+        const colorSet = new Set(color.split(",").map(color => color.trim().toLowerCase()));
         const colorRegex = colorSet.size > 0 ? new RegExp([...colorSet].join("|"),"i"):null;
 
         query = query.where("color").regex(colorRegex);
@@ -111,8 +120,7 @@ const getAllProducts = async(reqQuery) => {
     }
 
     if(minPrice && maxPrice){
-        query = query.where("discountedPrice").gte(minPrice).lte(maxPrice)
-        
+        query = query.where("price").gte(minPrice).lte(maxPrice)
     }
 
     if(minDiscount){
@@ -135,6 +143,7 @@ const getAllProducts = async(reqQuery) => {
     }
 
     const totalProducts = await Product.countDocuments(query);
+  
     const skip = (pageNumber - 1) * pageSize;
 
     query = query.skip(skip).limit(pageSize);
@@ -142,8 +151,9 @@ const getAllProducts = async(reqQuery) => {
     const products = await query.exec();
 
     const totalPages = Math.ceil(totalProducts/pageSize);
+   
 
-    return {content:products,currentPage:pageNumber,totalPages}
+    return {content:products,currentPage:1,totalPages}
 
 }
 
@@ -152,7 +162,6 @@ const createMultipleProducts = async(products) => {
         await createProduct(product);
     }
 }
-
 
 module.exports ={
     createProduct,
