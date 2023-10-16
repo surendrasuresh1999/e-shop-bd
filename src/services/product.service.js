@@ -58,12 +58,13 @@ const createProduct = async(reqData)=>{
         quantity: reqData.quantity,
         category: thirdLevel._id,
     })
-
+    // console.log("product created successfull",product)
     return await product.save();
 }
 
 const deleteProduct = async(productId)=>{
-    const product = await findProductById(productId);
+    // console.log("product received to the backend",productId)
+    // const product = await findProductById(productId);
 
     await Product.findByIdAndDelete(productId);
 

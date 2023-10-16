@@ -126,7 +126,6 @@ const getAllOrders = async()=>{
 const deleteOrder = async(orderId) => {
     const order = await findOrderById(orderId);
     await Order.findByIdAndDelete(order._id);
-
 }
 
 module.exports = {

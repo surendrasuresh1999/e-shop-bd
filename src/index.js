@@ -40,5 +40,8 @@ app.use("/api/reviews", reviewRouter)
 const ratingRouter = require("./routes/rating.route.js");
 app.use("/api/ratings", ratingRouter)
 
+const paymentRouter = require("./routes/payment.route.js");
+app.use("/api/payments",paymentRouter);
+
 
 module.exports = app;
